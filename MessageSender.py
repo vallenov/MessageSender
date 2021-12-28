@@ -9,12 +9,12 @@ app = Flask(__name__)
 
 @app.route('/', methods=['POST'])
 def send() -> dict:
-    '''
-    Input:
-    dict like {'to': ...,
-               'subject': ...,
-               'text': ...
-    '''
+    """
+    Run as a server and waits for POST requests
+    like:
+    {'to': 'something@mail.ru', 'subject': 'TEST', 'text': 'It works!'}
+    :return:
+    """
     resp = {}
     logging.basicConfig(filename='run.log',
                              level=logging.INFO,
