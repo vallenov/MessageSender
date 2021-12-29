@@ -7,15 +7,19 @@ import smtplib as smtp
 app = Flask(__name__)
 
 
-@app.route('/', methods=['POST'])
+@app.route('/', methods=['GET', 'POST'])
 def send() -> dict:
     """
     Run as a server and waits for POST requests
-    like:
-    {'to': 'something@mail.ru', 'subject': 'TEST', 'text': 'It works!'}
-    :return:
+    GET to check a status
+    POST like:
+    {'to': 'something@mail.ru', 'subject': 'TEST', 'text': 'It works!'} to send a message
+    :return: dict like {'res': 'OK', 'descr': 'something'}
     """
     resp = {}
+    if request.method == 'GET':
+        resp['res'] = 'OK'
+        return resp
     logging.basicConfig(filename='run.log',
                              level=logging.INFO,
                              format='%(asctime)s - %(levelname)s - %(message)s')
@@ -41,7 +45,7 @@ def send() -> dict:
         resp['descr'] = 'Mail do not sent'
         return resp
     else:
-        logging.info('message has been sent')
+        logging.info('Message has been sent')
         resp['resp'] = 'OK'
         return resp
 
