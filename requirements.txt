@@ -1,0 +1,4 @@
+flask
+flask_restful
+telebot
+pyTelegramBotApi==3.6.6
