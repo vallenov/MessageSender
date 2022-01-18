@@ -50,7 +50,7 @@ class Sender:
             except Exception as ex:
                 logging.exception(f'Exception: {ex}')
             else:
-                logging.info('Send successful')
+                logging.info('Send by SMTP was successful')
                 resp['resp'] = 'OK'
                 return resp
         resp['res'] = 'ERROR'
@@ -89,7 +89,7 @@ class Sender:
                 except Exception as _ex:
                     logging.exception(f'Unrecognized exception: {_ex}')
                 else:
-                    logging.info('Send successful')
+                    logging.info('Send by telegram was successful')
                     resp['res'] = 'OK'
                     return resp
             erm = 'Send message is unsuccessful. MAX_TRY exceeded'
