@@ -119,12 +119,15 @@ def send() -> dict:
             resp['res'] = 'ERROR'
             resp['descr'] = 'Email address is not found'
             return resp
-        data['subject'] = request.form.get('subject')
+        if request.form.get('subject'):
+            data['subject'] = request.form.get('subject')
         data['text'] = request.form.get('text')
+        logging.info(f"Message to {data['to']} ready to ship")
         if '@' not in data['to']:
-            return Sender.send_telegram(data)
+            resp = Sender.send_telegram(data)
         else:
-            return Sender.send_mail(data)
+            resp = Sender.send_mail(data)
+        return resp
 
 
 if __name__ == "__main__":
