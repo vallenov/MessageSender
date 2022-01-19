@@ -17,6 +17,9 @@ class Sender:
 
     @staticmethod
     def load_config():
+        """
+        Load config from ini
+        """
         Sender.config = configparser.ConfigParser()
         Sender.config.read('MessageSender.ini', encoding="windows-1251")
 
