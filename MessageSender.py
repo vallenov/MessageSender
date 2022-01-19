@@ -126,6 +126,7 @@ def send() -> dict:
     Sender.load_config()
     if request.method == 'GET':
         resp['res'] = 'OK'
+        app.logger.info('Check server')
         return resp
     elif request.method == 'POST':
         data = {'to': request.form.get('to')}
@@ -145,11 +146,10 @@ def send() -> dict:
 
 
 if __name__ == "__main__":
-    handler = logging.FileHandler('run.log')
-    handler.setLevel(logging.INFO)
-    handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+    logging.basicConfig(filename='run.log',
+                        level=logging.INFO,
+                        format='%(asctime)s - %(levelname)s - %(message)s')
     app.logger.setLevel(logging.INFO)
-    app.logger.addHandler(handler)
 
     Sender.load_config()
     host = Sender.config.get('START', 'host')
