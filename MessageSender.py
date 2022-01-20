@@ -124,6 +124,12 @@ def send() -> dict:
     """
     resp = {}
     Sender.load_config()
+    raddr = request.environ['REMOTE_ADDR']
+    rport = request.environ['REMOTE_PORT']
+    req_method = request.environ['REQUEST_METHOD']
+    serv_protocol = request.environ['SERVER_PROTOCOL']
+    app.logger.info(f'{raddr}:{rport} [{req_method} / {serv_protocol}]')
+    # app.logger.info(dir(request))
     if request.method == 'GET':
         resp['res'] = 'OK'
         app.logger.info('Check server')
@@ -146,10 +152,13 @@ def send() -> dict:
 
 
 if __name__ == "__main__":
-    logging.basicConfig(filename='run.log',
-                        level=logging.INFO,
-                        format='%(asctime)s - %(levelname)s - %(message)s')
     app.logger.setLevel(logging.INFO)
+
+    handler = logging.FileHandler('run.log')
+    handler.setLevel(logging.INFO)
+    handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+
+    app.logger.addHandler(handler)
 
     Sender.load_config()
     host = Sender.config.get('START', 'host')
