@@ -7,6 +7,12 @@ import smtplib as smtp
 import telebot
 
 app = Flask(__name__)
+app.logger.setLevel(logging.INFO)
+
+handler = logging.FileHandler('run.log')
+handler.setLevel(logging.INFO)
+handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+app.logger.addHandler(handler)
 
 MAX_TRY = 15
 
@@ -149,19 +155,3 @@ def send() -> dict:
         else:
             resp = Sender.send_mail(data)
         return resp
-
-
-if __name__ == "__main__":
-    app.logger.setLevel(logging.INFO)
-
-    handler = logging.FileHandler('run.log')
-    handler.setLevel(logging.INFO)
-    handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
-
-    app.logger.addHandler(handler)
-
-    Sender.load_config()
-    host = Sender.config.get('START', 'host')
-    port = Sender.config.get('START', 'port')
-
-    app.run(host=host, port=port, debug=True)
