@@ -119,39 +119,48 @@ class Sender:
             return resp
 
 
-@app.route('/', methods=['GET', 'POST'])
-def send() -> dict:
-    """
-    Run as a server and waits for POST or GET requests
-    GET to check a status
-    POST like:
-    {'to': 'something@mail.ru', 'subject': 'TEST', 'text': 'It works!'} to send a message
-    :return: dict like {'res': 'OK'} or {'res': 'ERROR', 'descr': 'something'}
-    """
+@app.route('/', methods=['GET'])
+def check() -> dict:
     resp = {}
-    Sender.load_config()
-    raddr = request.environ['REMOTE_ADDR']
-    rport = request.environ['REMOTE_PORT']
-    req_method = request.environ['REQUEST_METHOD']
-    serv_protocol = request.environ['SERVER_PROTOCOL']
-    app.logger.info(f'{raddr}:{rport} [{req_method} / {serv_protocol}]')
-    # app.logger.info(dir(request))
     if request.method == 'GET':
         resp['res'] = 'OK'
         app.logger.info('Check server')
         return resp
-    elif request.method == 'POST':
-        data = {'to': request.form.get('to')}
-        if not data['to']:
-            resp['res'] = 'ERROR'
-            resp['descr'] = 'Email address is not found'
-            return resp
-        if request.form.get('subject'):
-            data['subject'] = request.form.get('subject')
-        data['text'] = request.form.get('text')
-        app.logger.info(f"Message to {data['to']} ready to ship")
-        if '@' not in data['to']:
-            resp = Sender.send_telegram(data)
-        else:
-            resp = Sender.send_mail(data)
+
+
+@app.route('/telegram', methods=['POST'])
+def telegram() -> dict:
+    resp = {}
+    Sender.load_config()
+    data = {'to': request.form.get('to')}
+    if not data['to']:
+        resp['res'] = 'ERROR'
+        resp['descr'] = 'Email address is not found'
         return resp
+    data['text'] = request.form.get('text')
+    if not data['text']:
+        resp['res'] = 'ERROR'
+        resp['descr'] = 'Message text is not found'
+        return resp
+    resp = Sender.send_telegram(data)
+    return resp
+
+
+@app.route('/mail', methods=['POST'])
+def mail() -> dict:
+    resp = {}
+    Sender.load_config()
+    data = {'to': request.form.get('to')}
+    if not data['to']:
+        resp['res'] = 'ERROR'
+        resp['descr'] = 'Email address is not found'
+        return resp
+    if request.form.get('subject'):
+        data['subject'] = request.form.get('subject')
+    data['text'] = request.form.get('text')
+    if not data['text']:
+        resp['res'] = 'ERROR'
+        resp['descr'] = 'Message text is not found'
+        return resp
+    resp = Sender.send_mail(data)
+    return resp
