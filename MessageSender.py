@@ -32,6 +32,14 @@ class Sender:
         Sender.config.read('MessageSender.ini', encoding="windows-1251")
 
     @staticmethod
+    def log_request():
+        address = request.environ['REMOTE_ADDR']
+        port = request.environ['REMOTE_PORT']
+        req_method = request.environ['REQUEST_METHOD']
+        serv_protocol = request.environ['SERVER_PROTOCOL']
+        app.logger.info(f'{address}:{port} [{req_method} / {serv_protocol}]')
+
+    @staticmethod
     def send_mail(data: dict) -> dict:
         """
         Send message by the SMTP
@@ -116,7 +124,7 @@ class Sender:
                 app.logger.exception(resp['descr'])
                 return resp
             else:
-                app.logger.info(f'Bot: {is_bot}')
+                app.logger.info(f'Connection to bot success')
             current_try = 0
             while current_try <= MAX_TRY:
                 current_try += 1
@@ -138,6 +146,7 @@ class Sender:
 @app.route('/', methods=['GET'])
 def check() -> dict:
     resp = {}
+    Sender.log_request()
     if request.method == 'GET':
         resp['res'] = 'OK'
         app.logger.info('Check server')
@@ -147,6 +156,7 @@ def check() -> dict:
 @app.route('/telegram', methods=['POST'])
 def telegram() -> dict:
     resp = {}
+    Sender.log_request()
     Sender.load_config()
     data = {'to': request.form.get('to')}
     if not data['to']:
@@ -165,6 +175,7 @@ def telegram() -> dict:
 @app.route('/mail', methods=['POST'])
 def mail() -> dict:
     resp = {}
+    Sender.log_request()
     Sender.load_config()
     data = {'to': request.form.get('to')}
     if not data['to']:
