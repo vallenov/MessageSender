@@ -14,6 +14,8 @@ handler.setLevel(logging.INFO)
 handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
 app.logger.addHandler(handler)
 
+app.logger.info('MessageSender is start')
+
 MAX_TRY = 15
 
 
@@ -101,6 +103,13 @@ class Sender:
         else:
             token = Sender.config['TELEGRAM']['token']
             bot = telebot.TeleBot(token)
+            try:
+                bot.get_me()
+            except telebot.apihelper.ApiException as taa:
+                app.logger.exception(f'{taa}')
+                resp['res'] = 'ERROR'
+                resp['descr'] = 'Bot not found'
+                return resp
             current_try = 0
             while current_try <= MAX_TRY:
                 current_try += 1
