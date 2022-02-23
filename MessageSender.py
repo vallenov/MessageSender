@@ -104,12 +104,19 @@ class Sender:
             token = Sender.config['TELEGRAM']['token']
             bot = telebot.TeleBot(token)
             try:
-                bot.get_me()
+                is_bot = bot.get_me()
             except telebot.apihelper.ApiException as taa:
                 app.logger.exception(f'{taa}')
                 resp['res'] = 'ERROR'
-                resp['descr'] = 'Bot not found'
+                resp['descr'] = 'Bot API exception'
                 return resp
+            if not hasattr(is_bot, 'id'):
+                resp['res'] = 'ERROR'
+                resp['descr'] = 'Bot not found'
+                app.logger.exception(resp['descr'])
+                return resp
+            else:
+                app.logger.info(f'Bot: {is_bot}')
             current_try = 0
             while current_try <= MAX_TRY:
                 current_try += 1
