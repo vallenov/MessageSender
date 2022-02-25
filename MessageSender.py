@@ -66,6 +66,7 @@ class Sender:
             resp['res'] = 'ERROR'
             resp['descr'] = erm
             return resp
+        app.logger.info(f"Message to {data['to']} ready to ship")
         current_try = 0
         while current_try <= MAX_TRY:
             current_try += 1
@@ -125,6 +126,7 @@ class Sender:
                 return resp
             else:
                 app.logger.info(f'Connection to bot success')
+            app.logger.info(f"Message to {data['to']} ready to ship")
             current_try = 0
             while current_try <= MAX_TRY:
                 current_try += 1
