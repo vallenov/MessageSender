@@ -40,6 +40,22 @@ class Sender:
         app.logger.info(f'{address}:{port} [{req_method} / {serv_protocol}]')
 
     @staticmethod
+    def prepare_data_to_send(req):
+        resp = {'to': req.form.get('to')}
+        if not resp['to']:
+            resp['res'] = 'ERROR'
+            resp['descr'] = 'Email address is not found'
+            return resp
+        if req.form.get('subject'):
+            resp['subject'] = req.form.get('subject')
+        resp['text'] = req.form.get('text')
+        if not resp['text']:
+            resp['res'] = 'ERROR'
+            resp['descr'] = 'Message text is not found'
+            return resp
+        return resp
+
+    @staticmethod
     def send_mail(data: dict) -> dict:
         """
         Send message by the SMTP
@@ -157,39 +173,15 @@ def check() -> dict:
 
 @app.route('/telegram', methods=['POST'])
 def telegram() -> dict:
-    resp = {}
     Sender.log_request()
     Sender.load_config()
-    data = {'to': request.form.get('to')}
-    if not data['to']:
-        resp['res'] = 'ERROR'
-        resp['descr'] = 'Email address is not found'
-        return resp
-    data['text'] = request.form.get('text')
-    if not data['text']:
-        resp['res'] = 'ERROR'
-        resp['descr'] = 'Message text is not found'
-        return resp
-    resp = Sender.send_telegram(data)
-    return resp
+    resp = Sender.prepare_data_to_send(request)
+    return resp if resp and resp.get('res', None) is not None else Sender.send_telegram(resp)
 
 
 @app.route('/mail', methods=['POST'])
 def mail() -> dict:
-    resp = {}
     Sender.log_request()
     Sender.load_config()
-    data = {'to': request.form.get('to')}
-    if not data['to']:
-        resp['res'] = 'ERROR'
-        resp['descr'] = 'Email address is not found'
-        return resp
-    if request.form.get('subject'):
-        data['subject'] = request.form.get('subject')
-    data['text'] = request.form.get('text')
-    if not data['text']:
-        resp['res'] = 'ERROR'
-        resp['descr'] = 'Message text is not found'
-        return resp
-    resp = Sender.send_mail(data)
-    return resp
+    resp = Sender.prepare_data_to_send(request)
+    return resp if resp and resp.get('res', None) is not None else Sender.send_mail(resp)
