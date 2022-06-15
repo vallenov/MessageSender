@@ -1,5 +1,6 @@
 import logging
 import configparser
+import os.path
 from flask import Flask
 from flask_restful import request
 
@@ -10,6 +11,7 @@ app = Flask(__name__)
 app.logger.setLevel(logging.INFO)
 
 handler = logging.FileHandler('run.log')
+os.chown('run.log', 1000, 1000)
 handler.setLevel(logging.INFO)
 handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
 app.logger.addHandler(handler)

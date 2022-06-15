@@ -9,7 +9,7 @@ then
 else
   venv=False
 fi
-echo $venv
+
 if [ $venv = True ]
 then
   . .venv/bin/activate && echo activate venv
