@@ -105,7 +105,7 @@ class Sender:
     def send_telegram(data: dict) -> dict:
         """
         Send message by the telegram
-        :param data: {'to': 'name', 'text': 'text'}
+        :param data: {'to': 'chat_id', 'text': 'text'}
         :return: {'res': 'OK'} or {'res': 'ERROR', 'descr': 'something is wrong'}
         """
         resp = {}
@@ -113,15 +113,15 @@ class Sender:
             app.logger.error(f'ini has no section TELEGRAM')
             resp['res'] = 'ERROR'
             return resp
-        chat = int(Sender.config.get('TELEGRAM', data['to']))
+        chat = int(data.get('to', None))
         if not chat:
-            erm = 'user not found'
+            erm = 'User not found'
             app.logger.error(erm)
             resp['res'] = 'ERROR'
             resp['descr'] = erm
             return resp
         text = data.get('text', None)
-        if text is None:
+        if not text:
             erm = 'send text is empty'
             app.logger.error(erm)
             resp['res'] = 'ERROR'
