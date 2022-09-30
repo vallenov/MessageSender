@@ -89,7 +89,7 @@ class Sender:
         else:
             mime_text = MIMEText(text, 'plain', 'utf-8')
         if data.get('subject', None):
-            mime_text['Subject'] = Header(data.get('subject', ''), 'utf-8')
+            mime_text['Subject'] = Header(data.get('subject'), 'utf-8')
         app.logger.info(f"Message to {data['to']} ready to ship")
         current_try = 0
         while current_try <= MAX_TRY:
