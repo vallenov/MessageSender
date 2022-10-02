@@ -4,6 +4,9 @@ import os.path
 from flask import Flask
 from flask_restful import request
 
+from email.mime.text import MIMEText
+from email.header import Header
+
 import smtplib as smtp
 import telebot
 
@@ -76,7 +79,6 @@ class Sender:
             resp['res'] = 'ERROR'
             resp['descr'] = erm
             return resp
-        subject = data.get('subject', '')
         text = data.get('text', None)
         if text is None:
             erm = 'send text is empty'
@@ -84,13 +86,17 @@ class Sender:
             resp['res'] = 'ERROR'
             resp['descr'] = erm
             return resp
+        else:
+            mime_text = MIMEText(text, 'plain', 'utf-8')
+        if data.get('subject', None):
+            mime_text['Subject'] = Header(data.get('subject'), 'utf-8')
         app.logger.info(f"Message to {data['to']} ready to ship")
         current_try = 0
         while current_try <= MAX_TRY:
             current_try += 1
             try:
                 server.login(sender, passwd)
-                server.sendmail(sender, to, f'Subject:{subject}\n{text}')
+                server.sendmail(sender, to, mime_text.as_string())
             except Exception as ex:
                 app.logger.exception(f'Exception: {ex}')
             else:
