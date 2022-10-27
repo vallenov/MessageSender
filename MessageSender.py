@@ -16,7 +16,7 @@ app.logger.setLevel(logging.INFO)
 handler = logging.FileHandler('run.log')
 os.chown('run.log', 1000, 1000)
 handler.setLevel(logging.INFO)
-handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
 app.logger.addHandler(handler)
 
 app.logger.info('MessageSender is start')
