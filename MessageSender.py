@@ -14,7 +14,7 @@ app = Flask(__name__)
 app.logger.setLevel(logging.INFO)
 
 handler = logging.FileHandler('run.log')
-os.chown('run.log', 1000, 1000)
+# os.chown('run.log', 1000, 1000)
 handler.setLevel(logging.INFO)
 handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
 app.logger.addHandler(handler)
