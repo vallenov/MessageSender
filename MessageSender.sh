@@ -25,6 +25,6 @@ if [ $venv = True ]
 then
   ./.venv/bin/flask run --host=0.0.0.0 --port=5111
 else
-  ~/.pyenv/versions/MessageSender/bin/flask run --host=0.0.0.0 --port=5111
+  /home/vladimir/.pyenv/versions/MessageSender/bin/flask run --host=0.0.0.0 --port=5111
 fi
 #python MessageSender.py
